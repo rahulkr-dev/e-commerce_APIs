@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const { PORT,DB_URL } = require('./config');
 const errorHandler = require('./middlewares/errorHandler');
 const app = express();
+const router = require('./routes')
 
 // Database connection
 mongoose.connect(DB_URL,{
@@ -18,10 +19,11 @@ db.once('open', () => {
 });
 
 // routes
-
 // middlewares
-app.use(express.urlencoded());
+// app.use(express.urlencoded());
 app.use(express.json());
+
+app.use("/api",router)
 
 // Error handler
 app.use(errorHandler)

@@ -20,8 +20,9 @@ const registerController = {
         // Validation
         // Create Schema
         const registerSchema = Joi.object({
-            name: Joi.string().alphanum().min(3).max(20).required(),
-            email: Joi.string.email().required(),
+            name: Joi.string().min(3).max(20).required(),
+            email: Joi.string()
+                .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
             password: Joi.string().pattern(new RegExp(('^[a-zA-Z0-9]{3,30}$'))).required(),
             confirm_password: Joi.ref("password")
         });
@@ -29,23 +30,23 @@ const registerController = {
         const { error } = registerSchema.validate(req.body);
         if (error) {
             // Error handling
-            next(error)
+            return next(error)
         };
 
         // Check User Exists or not
         try {
             const user = await User.findOne({ email: req.body.email })
             if (user) {
-                next(CustomErrorHandler.alreadyExists("This Email is already exists"))
+                return next(CustomErrorHandler.alreadyExists("This Email is already taken"))
             }
         } catch (err) {
-            next(err)
+            return next(err)
         };
 
         const { email, name, password } = req.body
 
         // Hash passord
-        const hash = bycrypt.hash(password, 10);
+        const hash = await bycrypt.hash(password, 10);
 
         // Create model which store in database
 
@@ -60,12 +61,13 @@ const registerController = {
 
             // Generate token
             access_token = JwtServices.jwtSign({ _id: userDetails._id, role: userDetails.role });
+            // console.log(access_token)
 
         } catch (err) {
-            next(err)
+            return next(err)
         }
 
-        res.status(201).json(access_token)
+        res.status(201).json({access_token})
     }
 };
 
