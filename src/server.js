@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
-const { PORT,DB_URL } = require('./config')
+const { PORT,DB_URL } = require('./config');
+const errorHandler = require('./middlewares/errorHandler');
 const app = express();
 
 // Database connection
@@ -22,8 +23,8 @@ db.once('open', () => {
 app.use(express.urlencoded());
 app.use(express.json());
 
-
-
+// Error handler
+app.use(errorHandler)
 app.listen(PORT || 8080 ,()=>{
     console.log('Listening on Port',PORT)
 })
