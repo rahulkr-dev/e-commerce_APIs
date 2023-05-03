@@ -4,6 +4,6 @@ dotenv.config()
 module.exports =  {
     PORT,
     DB_URL,
-    SECRET,
+    JWT_SECRET,
     DEBURG_MODE
 } = process.env
