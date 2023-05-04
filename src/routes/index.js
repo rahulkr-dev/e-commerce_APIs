@@ -10,5 +10,6 @@ router.post('/register',registerController.register);
 router.post('/login',loginController.login);
 router.get('/me',auth,userController.me);
 router.post('/refresh_token',refreshTokenController.refreshToken)
+router.post('/logout',auth,loginController.logout)
 
-module.exports = router;
+module.exports = router
