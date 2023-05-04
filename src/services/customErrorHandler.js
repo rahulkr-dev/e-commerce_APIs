@@ -9,7 +9,16 @@ class CustomErrorHandler extends Error{
     };
     static wrongCredentials(){
         return new CustomErrorHandler(401,"Invalid email or password")
-    }
+    };
+
+    static unauthorize(msg="Unauthorize"){
+        return new CustomErrorHandler(401,msg)
+    };
+
+    static notFound(msg="404 Not found"){
+        return new CustomErrorHandler(404,msg)
+    };
+    
 };
 
 module.exports = CustomErrorHandler
