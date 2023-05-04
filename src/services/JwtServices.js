@@ -9,8 +9,8 @@ class JwtServices{
         })
     };
 
-    static verifyToken(token){
-        return jwt.verify(token,JWT_SECRET)
+    static verifyToken(token,secret=JWT_SECRET){
+        return jwt.verify(token,secret)
     }
 };
 

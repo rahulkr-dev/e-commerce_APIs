@@ -1,8 +1,9 @@
 const bycrypt = require('bcrypt')
 const Joi = require('joi')
-const {User} = require('../../models');
+const {User, RefreshToken} = require('../../models');
 const CustomErrorHandler = require('../../services/customErrorHandler');
 const JwtServices = require('../../services/JwtServices');
+const {REFRESH_SECRET} = require('../../config')
 const loginController = {
     async login(req,res,next){
         // Logic
@@ -30,8 +31,12 @@ const loginController = {
 
             // Generate Token
             let access_token = JwtServices.jwtSign({_id:user._id,role:user.role})
+            let refresh_token = JwtServices.jwtSign({_id:user._id,role:user.role},"1y",REFRESH_SECRET);
 
-            res.send({access_token})
+            // database whitelist of token
+            await RefreshToken.create({token:refresh_token})
+
+            res.send({access_token,refresh_token})
         }catch(err){
             return next(err)
         }

@@ -1,8 +1,9 @@
 const Joi = require("joi")
-const { User } = require('../../models')
+const { User, RefreshToken } = require('../../models')
 const CustomErrorHandler = require('../../services/customErrorHandler')
 const bycrypt = require('bcrypt');
 const JwtServices = require("../../services/JwtServices");
+const {REFRESH_SECRET} = require('../../config')
 
 
 // CHECKLIST
@@ -54,6 +55,7 @@ const registerController = {
             name, email, password: hash
         };
         let access_token;
+        let refresh_token;
 
         try {
             const userDetails = new User(model);
@@ -61,13 +63,15 @@ const registerController = {
 
             // Generate token
             access_token = JwtServices.jwtSign({ _id: userDetails._id, role: userDetails.role });
+            refresh_token = JwtServices.jwtSign({ _id: userDetails._id, role: userDetails.role },"1y",REFRESH_SECRET);
             // console.log(access_token)
-
+            // make white list when of refresh token
+            await RefreshToken.create({token:refresh_token})
         } catch (err) {
             return next(err)
         }
 
-        res.status(201).json({access_token})
+        res.status(201).json({access_token,refresh_token})
     }
 };
 
