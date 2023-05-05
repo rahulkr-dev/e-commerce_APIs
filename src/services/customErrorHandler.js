@@ -18,6 +18,10 @@ class CustomErrorHandler extends Error{
     static notFound(msg="404 Not found"){
         return new CustomErrorHandler(404,msg)
     };
+
+    static serverError(msg="Internal server error"){
+        return new CustomErrorHandler(500,msg)
+    }
     
 };
 
